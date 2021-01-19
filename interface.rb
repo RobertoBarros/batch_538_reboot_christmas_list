@@ -48,6 +48,21 @@ def delete(gifts)
   end
 end
 
+def mark(gifts)
+  list(gifts)
+  puts 'which item number do you want to mark?'
+  index = gets.chomp.to_i - 1
+
+  # gifts[2] => {item: 'iphone', bought: false}
+  # gifts[2][:bought] => false
+  # gifts[2][:bought] = true => {item: 'iphone', bought: true}
+  gifts[index][:bought] = true
+  list(gifts)
+
+
+  save_csv(CSV_FILENAME, gifts)
+
+end
 ##### O programa começa aqui #############
 
 if File.exist?(CSV_FILENAME) # Verifica se o arquivo de CSV existe
@@ -69,6 +84,7 @@ loop do
   when 'list' then list(gifts)
   when 'add' then add(gifts)
   when 'delete' then delete(gifts)
+  when 'mark' then mark(gifts)
   when 'quit' then break
   else
     puts 'Invalid action'
