@@ -17,14 +17,22 @@ def add(gifts)
   gifts << user_answer
 end
 
+def delete(gifts)
+  list(gifts)
+  puts 'Which item number do you like to delete?'
+  index = gets.chomp.to_i - 1
+  gifts.delete_at(index)
+end
+
 loop do
   # mostrar o menu list / add / delete / mark)
-  puts 'Which action list|add|quit?'
+  puts 'Which action list|add|delete|quit?'
   action = gets.chomp
 
   case action
   when 'list' then list(gifts)
   when 'add' then add(gifts)
+  when 'delete' then delete(gifts)
   when 'quit' then break
   else
     puts 'Invalid action'
