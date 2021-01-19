@@ -1,4 +1,7 @@
 require 'csv'
+require 'open-uri'
+require 'nokogiri'
+
 CSV_FILENAME = 'gifts.csv'
 
 # Carrega os TODOS salvos no arquivo csv_filepath (todos.csv)
@@ -68,11 +71,42 @@ def mark(gifts)
   # gifts[2][:bought] = true => {item: 'iphone', bought: true}
   gifts[index][:bought] = true
   list(gifts)
+  save_csv(CSV_FILENAME, gifts)
+end
 
+def scraper(gifts)
+  puts 'Enter the product to search:'
+  product = gets.chomp
+  url = "https://www.amazon.com.br/s?k=#{product}"
+
+  html_file = open(url).read
+  html_doc = Nokogiri::HTML(html_file)
+
+  products = []
+
+  html_doc.search('.s-result-item').each do |element| # Cada produto
+    price = element.search('.a-price-whole').text.strip
+    next if price == ''
+    cents = element.search('.a-price-fraction').text.strip
+    name = element.search('h2').text.strip
+
+    products << { name: name, price: "#{price}#{cents}" }
+  end
+
+  products.first(10).each_with_index do |product, index|
+    puts "#{index + 1} - #{product[:name]} | R$ #{product[:price]}"
+  end
+
+  puts 'Enter product number to add:'
+  index = gets.chomp.to_i - 1
+
+  gifts << { item: products[index][:name],
+             price: products[index][:price],
+             bought: false }
 
   save_csv(CSV_FILENAME, gifts)
-
 end
+
 ##### O programa começa aqui #############
 
 if File.exist?(CSV_FILENAME) # Verifica se o arquivo de CSV existe
@@ -87,7 +121,7 @@ puts "---- Welcome to your Christmas list -------"
 
 loop do
   # mostrar o menu list / add / delete / mark)
-  puts 'Which action list|add|delete|mark|quit?'
+  puts 'Which action list|add|delete|mark|scraper|quit?'
   action = gets.chomp
 
   case action
@@ -95,6 +129,7 @@ loop do
   when 'add' then add(gifts)
   when 'delete' then delete(gifts)
   when 'mark' then mark(gifts)
+  when 'scraper' then scraper(gifts)
   when 'quit' then break
   else
     puts 'Invalid action'
