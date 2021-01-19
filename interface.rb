@@ -3,9 +3,17 @@ CSV_FILENAME = 'gifts.csv'
 
 # Carrega os TODOS salvos no arquivo csv_filepath (todos.csv)
 def load_csv(csv_filepath)
+
+  # gifts é um array de hash
+  # gifts = [
+  #            {item: 'iphone', bought: false, price: 100},
+  #            {item: 'meias', bought: true, price: 20}
+  #         ]
+
+
   gifts = []
   CSV.foreach(csv_filepath) do |row|
-    gifts << { item: row[0], bought: row[1] == 'true' }
+    gifts << { item: row[0], bought: row[1] == 'true', price: row[2] } #Transformar cada linha do CSV em um Hash
   end
   return gifts
 end
@@ -14,7 +22,7 @@ end
 def save_csv(csv_filepath, gifts)
   CSV.open(csv_filepath, 'wb') do |csv|
     gifts.each do |gift| # Itera por cada todo do array com todos os TODOs
-      csv << [gift[:item], gift[:bought]] # Precisa colocar em um array porque o CSV é um array de arrays
+      csv << [gift[:item], gift[:bought], gift[:price]] # Precisa colocar em um array porque o CSV é um array de arrays
     end
   end
 end
@@ -24,14 +32,16 @@ def list(gifts)
 
   gifts.each_with_index do |gift, index|
     check = gift[:bought] ? '[X]' : '[ ]'
-    puts "#{index + 1} - #{check} #{gift[:item]}"
+    puts "#{index + 1} - #{check} #{gift[:item]} R$#{gift[:price]}"
   end
 end
 
 def add(gifts)
   puts 'Which item do you want to add?'
-  user_answer = gets.chomp
-  gifts << { item: user_answer, bought: false }
+  item = gets.chomp
+  puts 'Enter item price'
+  price = gets.chomp
+  gifts << { item: item, bought: false, price: price }
   save_csv(CSV_FILENAME, gifts)
 end
 
