@@ -12,8 +12,6 @@ def load_csv(csv_filepath)
   #            {item: 'iphone', bought: false, price: 100},
   #            {item: 'meias', bought: true, price: 20}
   #         ]
-
-
   gifts = []
   CSV.foreach(csv_filepath) do |row|
     gifts << { item: row[0], bought: row[1] == 'true', price: row[2] } #Transformar cada linha do CSV em um Hash
