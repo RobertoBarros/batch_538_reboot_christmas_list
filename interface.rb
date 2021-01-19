@@ -1,6 +1,5 @@
 require 'csv'
-# saudacao
-puts "---- Welcome to your Christmas list -------"
+CSV_FILENAME = 'gifts.csv'
 
 # Carrega os TODOS salvos no arquivo csv_filepath (todos.csv)
 def load_csv(csv_filepath)
@@ -33,7 +32,7 @@ def add(gifts)
   puts 'Which item do you want to add?'
   user_answer = gets.chomp
   gifts << user_answer
-  save_csv('gifts.csv', gifts)
+  save_csv(CSV_FILENAME, gifts)
 end
 
 def delete(gifts)
@@ -45,13 +44,20 @@ def delete(gifts)
     puts 'Invalid Number'
   else
     gifts.delete_at(index)
-    save_csv('gifts.csv', gifts)
+    save_csv(CSV_FILENAME, gifts)
   end
 end
 
+##### O programa começa aqui #############
 
+if File.exist?(CSV_FILENAME) # Verifica se o arquivo de CSV existe
+  gifts = load_csv(CSV_FILENAME)
+else
+  gifts = []
+end
 
-gifts = load_csv('gifts.csv')
+# saudacao
+puts "---- Welcome to your Christmas list -------"
 
 
 loop do
