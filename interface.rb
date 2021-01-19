@@ -5,7 +5,7 @@ CSV_FILENAME = 'gifts.csv'
 def load_csv(csv_filepath)
   gifts = []
   CSV.foreach(csv_filepath) do |row|
-    gifts << row[0] # Nosso csv só tem uma coluna
+    gifts << { item: row[0], bought: row[1] == 'true' }
   end
   return gifts
 end
@@ -14,24 +14,24 @@ end
 def save_csv(csv_filepath, gifts)
   CSV.open(csv_filepath, 'wb') do |csv|
     gifts.each do |gift| # Itera por cada todo do array com todos os TODOs
-      csv << [gift] # Precisa colocar em um array porque o CSV é um array de arrays
+      csv << [gift[:item], gift[:bought]] # Precisa colocar em um array porque o CSV é um array de arrays
     end
   end
 end
-
 
 def list(gifts)
   puts 'No items in list' if gifts.count.zero?
 
   gifts.each_with_index do |gift, index|
-    puts "#{index + 1} - #{gift}"
+    check = gift[:bought] ? '[X]' : '[ ]'
+    puts "#{index + 1} - #{check} #{gift[:item]}"
   end
 end
 
 def add(gifts)
   puts 'Which item do you want to add?'
   user_answer = gets.chomp
-  gifts << user_answer
+  gifts << { item: user_answer, bought: false }
   save_csv(CSV_FILENAME, gifts)
 end
 
@@ -62,7 +62,7 @@ puts "---- Welcome to your Christmas list -------"
 
 loop do
   # mostrar o menu list / add / delete / mark)
-  puts 'Which action list|add|delete|quit?'
+  puts 'Which action list|add|delete|mark|quit?'
   action = gets.chomp
 
   case action
