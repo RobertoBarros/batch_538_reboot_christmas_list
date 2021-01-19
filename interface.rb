@@ -21,7 +21,12 @@ def delete(gifts)
   list(gifts)
   puts 'Which item number do you like to delete?'
   index = gets.chomp.to_i - 1
-  gifts.delete_at(index)
+
+  if index.negative? || index > (gifts.count - 1) # Verifica se o index é valido
+    puts 'Invalid Number'
+  else
+    gifts.delete_at(index)
+  end
 end
 
 loop do
